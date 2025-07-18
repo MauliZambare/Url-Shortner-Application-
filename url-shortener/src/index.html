@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>URL Shortener</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>URL Shortener</h1>
+
+  <input type="text" id="originalUrl" placeholder="Enter long URL" size="50" />
+  <br />
+  <button onclick="shorten()">Shorten</button>
+
+  <div id="result"></div>
+
+  <script>
+    function shorten() {
+      const originalUrl = document.getElementById("originalUrl").value;
+      const resultDiv = document.getElementById("result");
+
+      if (!originalUrl) {
+        resultDiv.innerText = "Please enter a URL.";
+        return;
+      }
+
+      fetch("http://localhost:8000/shorten", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ originalUrl: originalUrl })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to shorten URL");
+        }
+        return response.text();
+      })
+      .then(data => {
+        resultDiv.innerHTML = `Shortened URL: <a href="${data}" target="_blank">${data}</a>`;
+      })
+      .catch(error => {
+        console.error(error);
+        resultDiv.innerText = "❌ Error shortening URL. Check if backend is running or if there's a CORS issue.";
+      });
+    }
+  </script>
+</body>
+</html>
