@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -classpath "bin:lib/json.jar" com.urlshortener.Main
+java -classpath "lib/*:bin" com.urlshortener.Main
