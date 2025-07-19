@@ -5,9 +5,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MySQLDatabase {
-    private static final String URL = "jdbc:mysql://localhost:3306/urlshortener_db";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root"; // 🔐 Change if different
+    private static final String DB_HOST = System.getenv("DB_HOST");
+    private static final String DB_PORT = System.getenv().getOrDefault("DB_PORT", "3306");
+    private static final String DB_NAME = System.getenv("DB_NAME");
+    private static final String DB_USER = System.getenv("DB_USER");
+    private static final String DB_PASS = System.getenv("DB_PASS");
+
+    private static final String URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
+    private static final String USER = DB_USER;
+    private static final String PASSWORD = DB_PASS;
 
     public static Connection getConnection() {
         try {
