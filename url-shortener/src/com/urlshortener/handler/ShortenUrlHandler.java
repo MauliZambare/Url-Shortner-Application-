@@ -16,15 +16,23 @@ public class ShortenUrlHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        // Set CORS headers for all responses
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+
+        // Handle preflight OPTIONS request
+        if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+            sendResponse(exchange, 204, ""); // No Content
+            return;
+        }
+
         // Only accept POST requests
         if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
             sendResponse(exchange, 405, "Method Not Allowed");
             return;
         }
-
-        // Set response headers (optional: for browser or CORS support)
-        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST");
+        
         exchange.getResponseHeaders().add("Content-Type", "application/json");
 
         // Read request body

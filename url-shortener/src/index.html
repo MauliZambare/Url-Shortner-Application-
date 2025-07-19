@@ -64,17 +64,19 @@
       const url = document.getElementById('originalUrl').value;
 
       try {
-        const response = await fetch('/shorten', {
+                const response = await fetch('http://localhost:8080/shorten', {
           method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: url
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ originalUrl: url })
         });
 
         if (!response.ok) {
-          throw new Error('Failed to shorten URL');
+          const errorData = await response.json().catch(() => ({ message: 'Failed to shorten URL' }));
+          throw new Error(errorData.error || 'Failed to shorten URL');
         }
 
-        const shortUrl = await response.text();
+        const data = await response.json();
+        const shortUrl = data.shortUrl;
         document.getElementById('result').innerHTML = `Short URL: <a href="${shortUrl}" target="_blank">${shortUrl}</a>`;
       } catch (error) {
         document.getElementById('result').innerHTML = `❌ Error: ${error.message}`;

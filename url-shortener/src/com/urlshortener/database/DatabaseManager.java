@@ -2,7 +2,6 @@ package com.urlshortener.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class DatabaseManager {
     private static Connection connection;

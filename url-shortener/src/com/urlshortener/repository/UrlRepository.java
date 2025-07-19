@@ -33,7 +33,7 @@ public class UrlRepository {
 
             if (rs.next()) {
                 String originalUrl = rs.getString("original_url");
-                return new UrlMapping(originalUrl, shortCode);
+                return new UrlMapping(shortCode, originalUrl);
             }
 
         } catch (SQLException e) {

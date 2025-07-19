@@ -4,12 +4,12 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.urlshortener.service.UrlShortenerService;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
+import java.nio.file.Files;
 
 public class RedirectHandler implements HttpHandler {
-
     private final UrlShortenerService service;
 
     public RedirectHandler(UrlShortenerService service) {
@@ -18,24 +18,31 @@ public class RedirectHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_METHOD, -1);
-            return;
-        }
-
         String path = exchange.getRequestURI().getPath();
-        String shortCode = path.substring(1); // remove leading slash
+        System.out.println("RedirectHandler: Request path: " + path);
 
-        String originalUrl = service.getOriginalUrl(shortCode);
-        if (originalUrl != null) {
-            exchange.getResponseHeaders().set("Location", originalUrl);
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_MOVED_TEMP, -1);
-        } else {
-            String response = "404 - File Not Found";
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, response.length());
+        if ("/".equals(path)) {
+            // Serve index.html
+            File file = new File("src/index.html");
+            exchange.sendResponseHeaders(200, file.length());
             try (OutputStream os = exchange.getResponseBody()) {
-                os.write(response.getBytes());
+                Files.copy(file.toPath(), os);
+            }
+        } else {
+            String shortCode = path.substring(1);
+            System.out.println("RedirectHandler: Extracted short code: " + shortCode);
+            String originalUrl = service.getOriginalUrl(shortCode);
+            System.out.println("RedirectHandler: Retrieved original URL: " + originalUrl);
+
+            if (originalUrl != null) {
+                exchange.getResponseHeaders().set("Location", originalUrl);
+                exchange.sendResponseHeaders(302, -1); // 302 Found
+            } else {
+                String response = "URL not found";
+                exchange.sendResponseHeaders(404, response.length());
+                exchange.getResponseBody().write(response.getBytes());
             }
         }
+        exchange.close();
     }
 }
