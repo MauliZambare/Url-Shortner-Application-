@@ -5,57 +5,92 @@
   <title>Simple URL Shortener</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      background-color: #f7f9fc;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-radius: 10px;
-    }
-    h2 {
-      text-align: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #e0f2f7; /* Light blue background */
       color: #333;
     }
-    input, button {
-      padding: 12px;
-      margin: 10px 0;
+    .container {
+      background-color: #ffffff;
+      padding: 35px 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
+      max-width: 500px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    h2 {
+      color: #2c3e50; /* Darker blue for heading */
+      margin-bottom: 25px;
+      font-size: 2em;
+      font-weight: 600;
+    }
+    input[type="url"] {
+      width: calc(100% - 24px); /* Account for padding */
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #b0bec5; /* Light grey border */
+      border-radius: 8px;
+      font-size: 1.1em;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    input[type="url"]:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+      outline: none;
     }
     button {
-      background-color: #007bff;
+      background-color: #007bff; /* Primary blue */
       color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
     }
     button:hover {
-      background-color: #0056b3;
+      background-color: #0056b3; /* Darker blue on hover */
+      transform: translateY(-2px);
     }
     #result {
-      margin-top: 15px;
-      font-size: 16px;
-      text-align: center;
-      color: green;
+      margin-top: 25px;
+      font-size: 1.1em;
+      color: #28a745; /* Green for success */
+      word-wrap: break-word; /* Ensures long URLs wrap */
     }
-    a {
-      color: #28a745;
+    #result a {
+      color: #007bff;
       text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
     }
-    a:hover {
+    #result a:hover {
+      color: #0056b3;
       text-decoration: underline;
+    }
+    .error-message {
+      color: #dc3545; /* Red for errors */
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <h2>🔗 Simple URL Shortener</h2>
-  <form id="shortenForm">
-    <input type="url" id="originalUrl" placeholder="Enter URL to shorten" required />
-    <button type="submit">Shorten</button>
-  </form>
-  <div id="result"></div>
+  <div class="container">
+    <h2>🔗 Simple URL Shortener</h2>
+    <form id="shortenForm">
+      <input type="url" id="originalUrl" placeholder="Enter URL to shorten" required />
+      <button type="submit">Shorten</button>
+    </form>
+    <div id="result"></div>
+  </div>
 
   <script>
     document.getElementById('shortenForm').addEventListener('submit', async (e) => {
@@ -79,7 +114,7 @@
         const shortUrl = data.shortUrl;
         document.getElementById('result').innerHTML = `Short URL: <a href="${shortUrl}" target="_blank">${shortUrl}</a>`;
       } catch (error) {
-        document.getElementById('result').innerHTML = `❌ Error: ${error.message}`;
+        document.getElementById('result').innerHTML = `<span class="error-message">❌ Error: ${error.message}</span>`;
       }
     });
   </script>
