@@ -5,16 +5,30 @@ import com.urlshortener.repository.UrlRepository;
 import com.urlshortener.util.UrlGenerator;
 
 public class UrlShortenerService {
-    private final UrlRepository repository = new UrlRepository();
+    private final UrlRepository repository;
+
+    // Constructor injection for better testing and flexibility
+    public UrlShortenerService() {
+        this.repository = new UrlRepository();
+    }
 
     public String shortenUrl(String originalUrl) {
-        String code = UrlGenerator.generateShortCode();
-        UrlMapping mapping = new UrlMapping(code, originalUrl);
+        if (originalUrl == null || originalUrl.trim().isEmpty()) {
+            throw new IllegalArgumentException("Original URL cannot be null or empty");
+        }
+
+        String shortCode = UrlGenerator.generateShortCode();
+        UrlMapping mapping = new UrlMapping(shortCode, originalUrl);
         repository.save(mapping);
-        return "http://localhost:8080/" + code;
+
+        return "http://localhost:8080/" + shortCode;
     }
 
     public String getOriginalUrl(String shortCode) {
+        if (shortCode == null || shortCode.trim().isEmpty()) {
+            return null;
+        }
+
         UrlMapping mapping = repository.findByShortCode(shortCode);
         return (mapping != null) ? mapping.getOriginalUrl() : null;
     }
